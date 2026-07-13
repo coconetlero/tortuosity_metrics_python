@@ -10,8 +10,8 @@ tortuosity measures on them.
 ## Setup
 
 ```bash
-git clone <repo-url>
-cd <repo-folder>
+git clone https://github.com/coconetlero/tortuosity_metrics_python.git
+cd tortuosity_metrics_python
 
 python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
@@ -38,4 +38,3 @@ Curve(n_points=3, length=4.5765)
 - `derivatives.py` — `CurveDerivatives`: finite differences, spline, and csaps derivative methods
 - `tortuosity.py` — tortuosity measures (arc-chord, SOAM, curvature-based, ICM, TD, ASDC)
 - `geometry.py` — shared arc-length / chord-length utilities
-- `escc.py` / `escc_clean.py` — curve resampling by directional search boundary
