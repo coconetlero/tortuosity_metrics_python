@@ -31,6 +31,11 @@ Expected output:
 Curve(n_points=3, length=4.5765)
 ```
 
+## Run
+The metrics test file:
+
+python test.py
+
 ## Modules
 
 - `curve.py` — `Curve` class: 2D open curve, smoothing, resampling, plotting
