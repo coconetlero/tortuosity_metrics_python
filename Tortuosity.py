@@ -151,8 +151,8 @@ class TotalCurvatureTortuosity(TortuosityMeasure):
         if n < 3:
             return 0.0
 
-        scc_t = geometry.cumulative_arclength(x, y)
-        deriv = CurveDerivatives(_ArrayCurve(x, y), t=scc_t)
+        curve_parametrization = geometry.cumulative_arclength(x, y)
+        deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
         t, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
         total_curvature = np.trapezoid(np.abs(kappa), t)
  
@@ -184,9 +184,10 @@ class Tau_3_Tortuosity(TortuosityMeasure):
         if n < 3:
             return 0.0
  
-        deriv = CurveDerivatives(_ArrayCurve(x, y))
+        curve_parametrization = geometry.cumulative_arclength(x, y)
+        deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
         t, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
-        Tau_3 = np.trapezoid(kappa, t)
+        Tau_3 = np.trapezoid(kappa ** 2, t)
  
         return float(Tau_3)
 

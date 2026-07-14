@@ -37,28 +37,28 @@ param_curve = Curve(Xscc, Yscc)
 
 
 
-T_dm = param_curve.tortuosity("DM")
+# T_dm = param_curve.tortuosity("DM")
 # T_2 = param_curve.tortuosity("total_curvature", smooth=1.0)
-# T_3 = param_curve.tortuosity("tau_3", smooth=1.0)
-# T_5 = param_curve.tortuosity("tau_5", smooth=1.0)
+T_3 = param_curve.tortuosity("tau_3", smooth=1.0)
+T_5 = param_curve.tortuosity("tau_5", smooth=1.0)
 # ASDC = param_curve.tortuosity("ASDC", smooth=1.0)
 # ICM = param_curve.tortuosity("ICM", smooth=1.0)
 # TD = param_curve.tortuosity("TD", smooth=1.0)
 # SOAM = param_curve.tortuosity("SOAM")
-T_scc = param_curve.tortuosity("SCC")
-T_escc = param_curve.tortuosity("ESCC")
+# T_scc = param_curve.tortuosity("SCC")
+# T_escc = param_curve.tortuosity("ESCC")
 
 
-print("Tortuosity (DM): {:.4f}".format(T_dm))
+# print("Tortuosity (DM): {:.4f}".format(T_dm))
 # print("Tortuosity (Total Curvature): {:.4f}".format(T_2))
-# print("Tortuosity (Tau_3): {:.4f}".format(T_3))
-# print("Tortuosity (Tau_5): {:.4f}".format(T_5))
+print("Tortuosity (Tau_3): {:.4f}".format(T_3))
+print("Tortuosity (Tau_5): {:.4f}".format(T_5))
 # print("Tortuosity (ASDC): {:.4f}".format(ASDC))
 # print("Tortuosity (ICM): {:.4f}".format(ICM))
 # print("Tortuosity (TD): {:.4f}".format(TD))
 # print("Tortuosity (SOAM): {:.4f}".format(SOAM))
-print("Tortuosity (SCC): {:.4f}".format(T_scc))
-print("Tortuosity (ESCC): {:.4f}".format(T_escc))
+# print("Tortuosity (SCC): {:.4f}".format(T_scc))
+# print("Tortuosity (ESCC): {:.4f}".format(T_escc))
 
 pixel_curve.plot(smoothed_curve, param_curve, labels=["original", "smoothed", "parametrized"], show_points=True)
 
