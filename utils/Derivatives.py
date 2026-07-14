@@ -24,6 +24,9 @@ import numpy as np
 from csaps import csaps
 from scipy.interpolate import UnivariateSpline
 
+import utils.geometry as geometry
+
+
 
 class DerivativeMethod(ABC):
     """
@@ -66,8 +69,7 @@ class FiniteDifferenceDerivative(DerivativeMethod):
 
     Finite differences are only defined at the original sample points,
     so `t_eval` (if given) must match `t` exactly — this method cannot
-    resample onto a different grid. Use a spline-based method instead
-    if you need derivatives at arbitrary points.
+    resample onto a different grid. 
     """
 
     def compute(self, t, values, order=1, t_eval=None):
@@ -122,8 +124,7 @@ class SplineDerivative(DerivativeMethod):
 class CsapsDerivative(DerivativeMethod):
     """
     Computes derivatives by fitting a csaps cubic smoothing spline to
-    values(t) (the Python package that replicates MATLAB's csaps),
-    then evaluating its analytical derivative.
+    values(t), then evaluating its analytical derivative.
 
     Parameters:
         smooth : float
@@ -206,9 +207,12 @@ class CurveDerivatives:
         curvature = deriv.curvature("spline", smooth=0.05)
     """
 
-    def __init__(self, curve):
+    def __init__(self, curve, t=None):
         self.curve = curve
-        self.t = np.linspace(0, curve.arclength(), len(curve))
+        if t is not None:
+            self.t = t
+        else:        
+            self.t = np.linspace(0, curve.arclength(), len(curve))
         
 
     def compute(self, method="finite_difference", order=1, num_points=None, **kwargs):
@@ -241,11 +245,10 @@ class CurveDerivatives:
         else:
             strategy = get_derivative_method(method, **kwargs)
 
-        t_eval = (
-            np.linspace(self.t.min(), self.t.max(), num_points)
-            if num_points is not None
-            else None
-        )
+        t_eval = None
+        if num_points is not None:
+            t_eval = np.linspace(self.t.min(), self.t.max(), num_points)
+        
 
         dxdt = strategy.compute(self.t, self.curve.x, order=order, t_eval=t_eval)
         dydt = strategy.compute(self.t, self.curve.y, order=order, t_eval=t_eval)
