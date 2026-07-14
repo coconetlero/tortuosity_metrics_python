@@ -338,10 +338,10 @@ class SOAMTortuosity(TortuosityMeasure):
     """
     Sum of Angles Metric (SOAM), based on Bullitt et al. (2003).
 
-    Computes the discrete turning angle at each interior point and
-    accumulates their squared magnitude, normalized by arc length:
+    Computes the discrete turning angle (in degrees) at each interior point and
+    accumulates, normalized by arc length:
 
-        SOAM = sqrt( sum(|angle|) / arc_length )
+        SOAM = sum(|angle|) / arc_length 
 
     Higher values indicate more frequent/sharper directional changes
     per unit length. Sensitive to high-frequency noise, so consider
@@ -353,28 +353,17 @@ class SOAMTortuosity(TortuosityMeasure):
         if n < 3:
             return 0.0
 
-        angles = np.zeros(n - 2)
-        for i in range(1, n - 1):
-            v1 = np.array([x[i] - x[i - 1], y[i] - y[i - 1]])
-            v2 = np.array([x[i + 1] - x[i], y[i + 1] - y[i]])
-
-            norm1 = np.linalg.norm(v1)
-            norm2 = np.linalg.norm(v2)
-            if np.isclose(norm1, 0) or np.isclose(norm2, 0):
-                angles[i - 1] = 0.0
-                continue
-
-            cos_angle = np.clip(np.dot(v1, v2) / (norm1 * norm2), -1.0, 1.0)
-            angles[i - 1] = np.arccos(cos_angle)
-
         dx = np.diff(x)
         dy = np.diff(y)
-        arc_length = np.sum(np.sqrt(dx**2 + dy**2))
+                
+        Theta = np.degrees(np.arctan2(dy, dx))
+        alpha = np.diff(Theta)
 
+        arc_length = sum(np.sqrt(dx**2 + dy**2))
         if np.isclose(arc_length, 0):
             return 0.0
 
-        return np.sqrt(np.sum(np.abs(angles)) / arc_length)
+        return np.sum(np.abs(alpha)) / arc_length
     
 
 
