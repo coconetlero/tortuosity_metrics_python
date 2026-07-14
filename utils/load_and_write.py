@@ -7,15 +7,15 @@ import re
 
 
 
-def load_float_curve_from_txt_file(file_path):
+def load_float_curve_from_txt_file(file_path, delimiter=' '):
     """
     Load a curve from a txt file
     """
-    curve = np.loadtxt(file_path, dtype=np.float32, delimiter=',')
+    curve = np.loadtxt(file_path, dtype=np.float32, delimiter=delimiter)
     return curve
 
 
-def load_float_curves_from_txt_files(folder_path):
+def load_float_curves_from_txt_files(folder_path, delimiter=' '):
     """
     Load all curves from a folder containing txt files
     """
@@ -25,7 +25,7 @@ def load_float_curves_from_txt_files(folder_path):
     filtered_filenames = sorted(filtered_filenames)
     for filename in filtered_filenames:
         file_path = os.path.join(folder_path, filename)
-        curve = load_float_curve_from_txt_file(file_path)
+        curve = load_float_curve_from_txt_file(file_path, delimiter=delimiter)
         curves.append(curve)
         filenames.append(filename)
     
@@ -43,7 +43,7 @@ def load_pixelated_curve_from_txt_file(file_path, delimiter=' '):
     return pixelated_curve
 
 
-def load_pixelated_curves_from_txt_files(folder_path):
+def load_pixelated_curves_from_txt_files(folder_path, delimiter=' '):
     """
     Load all curves from a folder containing txt files
     """
@@ -53,7 +53,7 @@ def load_pixelated_curves_from_txt_files(folder_path):
     filtered_filenames = sorted(filtered_filenames)
     for filename in filtered_filenames:
         file_path = os.path.join(folder_path, filename)
-        curve = load_pixelated_curve_from_txt_file(file_path)
+        curve = load_pixelated_curve_from_txt_file(file_path, delimiter=delimiter)
         curves.append(curve)
         filenames.append(filename)
     
