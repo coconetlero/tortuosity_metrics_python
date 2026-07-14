@@ -234,7 +234,7 @@ class AverageSquaredDerivativeCurvatureTortuosity(TortuosityMeasure):
     Average Squared-Derivative-Curvature (ASDC), based on Patasius et
     al. (used in retinal vessel tortuosity literature):
  
-        ASDC = (1 / L) * integral( (d(kappa)/ds)^2 ) ds
+        ASDC = (1 / L) * integral( (d(kappa)/dt)^2 ) ds
 
 
     Parameters:
@@ -255,25 +255,26 @@ class AverageSquaredDerivativeCurvatureTortuosity(TortuosityMeasure):
         if n < 3:
             return 0.0
  
-        curve = CurveDerivatives(_ArrayCurve(x, y))
-        t, kappa = curve.curvature(method="csaps", smooth=self.smooth)
+        curve_parametrization = geometry.cumulative_arclength(x, y)
+        deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
+        t, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
  
-        trim = int(round(0.1 * len(t)))
-        if trim > 0 and len(t) - 2 * trim >= 3:
-            t = t[trim: len(t) - trim]
-            kappa = kappa[trim: len(kappa) - trim]
+        # trim = int(round(0.1 * len(t)))
+        # if trim > 0 and len(t) - 2 * trim >= 3:
+        #     t = t[trim: len(t) - trim]
+        #     kappa = kappa[trim: len(kappa) - trim]
  
-        if len(t) < 3:
+        # if len(t) < 3:
+        #     return 0.0
+ 
+        dkappa_dt = np.gradient(kappa)
+        integral = np.trapezoid(dkappa_dt**2)
+
+        L_x = geometry.chord_length(x, y)
+        if np.isclose(L_x, 0):
             return 0.0
  
-        dkappa_ds = np.gradient(kappa, t)
-        integral = np.trapezoid(dkappa_ds**2, t)
- 
-        L = t[-1] - t[0]
-        if np.isclose(L, 0):
-            return 0.0
- 
-        return float(integral / L)
+        return integral / L_x
 
 
 
