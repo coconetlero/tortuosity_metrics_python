@@ -291,22 +291,6 @@ class InflectionCountTortuosity(TortuosityMeasure):
     def __init__(self, smooth=0.99, threshold=1e-4):
         self.smooth = smooth
         self.threshold = threshold  # minimum excess length to count an inflection
-
-    # def compute(self, x, y):
-    #     n = len(x)
-    #     if n < 3:
-    #         return 0.0
- 
-    #     curve_parametrization = geometry.cumulative_arclength(x, y)
-    #     deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
-    #     _, signed_curvature = deriv.curvature(method="csaps", smooth=self.smooth)
- 
-    #     signs = np.sign(signed_curvature)
-    #     signs = signs[signs != 0]  # ignore exact zeros
-    #     n_inflections = int(np.sum(np.diff(signs) != 0)) if len(signs) > 1 else 0
- 
-    #     arc_chord = Distance_Metric_Tortuosity().compute(x, y)
-    #     return arc_chord * (n_inflections + 1)
  
     def compute(self, x, y):
         n = len(x)
@@ -337,11 +321,9 @@ class InflectionCountTortuosity(TortuosityMeasure):
                     i_start = i
                     continue                
 
-                Lcs_i = geometry.arclength(x[i_start:i_end + 1], y[i_start:i_end + 1])
-                Lxs_i = np.hypot(x[i_start] - x[i_end], y[i_start] - y[i_end])
-                Lt = (Lcs_i / Lxs_i) - 1
+                DMs_i = Distance_Metric_Tortuosity().compute(x[i_start:i_end + 1], y[i_start:i_end + 1]) - 1
     
-                if Lt > self.threshold:
+                if DMs_i > self.threshold:
                     n_inflections += 1
 
                 i_start = i - 1
@@ -359,7 +341,7 @@ class SOAMTortuosity(TortuosityMeasure):
     Computes the discrete turning angle at each interior point and
     accumulates their squared magnitude, normalized by arc length:
 
-        SOAM = sqrt( sum(angle_i^2) / arc_length )
+        SOAM = sqrt( sum(|angle|) / arc_length )
 
     Higher values indicate more frequent/sharper directional changes
     per unit length. Sensitive to high-frequency noise, so consider
@@ -392,7 +374,7 @@ class SOAMTortuosity(TortuosityMeasure):
         if np.isclose(arc_length, 0):
             return 0.0
 
-        return np.sqrt(np.sum(angles**2) / arc_length)
+        return np.sqrt(np.sum(np.abs(angles)) / arc_length)
     
 
 
@@ -424,51 +406,55 @@ class TortuosityDensityTortuosity(TortuosityMeasure):
     """
 
 
-    def __init__(self, smooth=0.99):
+    def __init__(self, smooth=0.99, threshold=1e-4):
         self.smooth = smooth
- 
+        self.threshold = threshold
+
     def compute(self, x, y):
         n = len(x)
         if n < 3:
             return 0.0
  
-        L_x = geometry.chord_length(x, y)
-        if np.isclose(L_x, 0):
-            return np.inf
- 
-        deriv = CurveDerivatives(_ArrayCurve(x, y))
+        curve_parametrization = geometry.cumulative_arclength(x, y)
+        deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
         _, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
  
-        # Find indices where curvature changes sign 
         signs = np.sign(kappa)
-        boundaries = [0]
-        prev_sign = None
-        for i in range(n):
-            s = signs[i]
-            if s == 0:
+        L = []
+
+        i_start = 0
+        n_ic = 0        
+        sign_deriv = signs[0]
+        for i, sign_i in enumerate(signs[1:], start=1):
+            if sign_i == 0:
                 continue
-            if prev_sign is not None and s != prev_sign:
-                boundaries.append(i)
-            prev_sign = s
-        boundaries.append(n - 1)
-        boundaries = sorted(set(boundaries))
- 
-        segment_sum = 0.0
-        for start, end in zip(boundaries[:-1], boundaries[1:]):
-            if end <= start:
-                continue
-            seg_x = x[start:end + 1]
-            seg_y = y[start:end + 1]
- 
-            Lc_i = geometry.arclength(seg_x, seg_y)
-            Lx_i = geometry.chord_length(seg_x, seg_y)
- 
-            if np.isclose(Lx_i, 0):
-                continue  # degenerate (zero-length) segment, skip
- 
-            segment_sum += (Lc_i / Lx_i - 1)
- 
-        return float(segment_sum / L_x)
+            
+            if sign_deriv == 0:
+                sign_deriv = sign_i
+
+            if sign_deriv != sign_i:
+                sign_deriv = sign_i
+                i_end = i
+
+                if i_end - i_start < 2:
+                    i_start = i
+                    continue                
+
+                DMs_i = Distance_Metric_Tortuosity().compute(x[i_start:i_end + 1], y[i_start:i_end + 1]) - 1
+    
+                if DMs_i > self.threshold:
+                    L.append(DMs_i)
+                    n_ic += 1                    
+                    i_start = i
+        
+        if i_start < len(x) -1:
+           DMs_i = Distance_Metric_Tortuosity().compute(x[i_start:], y[i_start:]) - 1
+           L.append(DMs_i)
+           n_ic += 1           
+        
+        L_c = geometry.arclength(x, y)
+        TD = ((n_ic - 1) / n_ic) * (1 / L_c) * np.sum(L)
+        return TD
 
 
 
