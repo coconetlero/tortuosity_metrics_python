@@ -370,28 +370,22 @@ class SOAMTortuosity(TortuosityMeasure):
 
 class TortuosityDensityTortuosity(TortuosityMeasure):
     """
-    Tortuosity Density (TD), based on T. D. Nafia et al.
+    Tortuosity Density (TD), based on Enrico Grisan et al. 2008
  
-    The curve is split into segments at each inflection point (a sign
-    change in curvature — i.e. where the curve switches from bending
-    one way to bending the other). For each segment, the "excess
-    length" relative to a straight line between its endpoints is
-    computed, and these are summed and normalized by the total chord
-    length of the whole curve:
+    It is based on partitioning each vessel in segments of constant-sign curvature
+    and then combining together each evaluation of such segments and their number.
  
-        TD = (1 / Lx) * sum_{i=1}^{N} (Lc_i / Lx_i - 1)
+        TD = ((n - 1) / n) * (1 / Lc) * sum_{i=1}^{n} ((Lc_i / Lx_i) - 1)
  
     where Lc_i and Lx_i are the arc length and chord length of the
-    i-th segment (N segments total, split at N-1 inflection points),
-    and Lx is the chord length of the entire curve.
+    i-th segment (n segments total, split at n-1 inflection points),
+    and Lc is the arclen of the entire curve.
 
     Parameters:
     smooth : float
         Smoothing parameter in [0, 1], passed to the underlying
         csaps fit used to locate inflection points. 0 =
-        least-squares line fit, 1 = exact interpolation. Default
-        0.99 lightly regularizes to avoid spurious inflections
-        from point-to-point noise. Requires: pip install csaps.
+        least-squares line fit, 1 = exact interpolation. 
     """
 
 
