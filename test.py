@@ -9,10 +9,11 @@ from utils import geometry
 import utils.load_and_write as lw
 
 
-
+### path for the image and the curve coordinates
 # im_path = "/Volumes/HOUSE MINI/IMAGENES/Fondus_Databases/SCALE_TORT_DB/im_arteries/18_18_art_fp.tif"
 curve_path = 'data/curves_arteries/18_18_art_fp.txt'
 
+### load the image and its corresponding curve coordinates, and create a Curve object
 # img = cv2.imread(im_path, cv2.IMREAD_GRAYSCALE)
 curve_coords = lw.load_pixelated_curve_from_txt_file(curve_path, delimiter=',')
 curve_coords += 1  # add 1 to be MATLAB arteries_data.mat and veins_data.m compatible, (1 based indexing)
@@ -37,28 +38,28 @@ param_curve = Curve(Xscc, Yscc)
 
 
 
-# T_dm = param_curve.tortuosity("DM")
-# T_2 = param_curve.tortuosity("total_curvature", smooth=1.0)
-# T_3 = param_curve.tortuosity("tau_3", smooth=1.0)
-# T_5 = param_curve.tortuosity("tau_5", smooth=1.0)
+T_dm = param_curve.tortuosity("DM")
+T_2 = param_curve.tortuosity("total_curvature", smooth=1.0)
+T_3 = param_curve.tortuosity("tau_3", smooth=1.0)
+T_5 = param_curve.tortuosity("tau_5", smooth=1.0)
 ASDC = param_curve.tortuosity("ASDC", smooth=1.0)
-# ICM = param_curve.tortuosity("ICM", smooth=1.0)
-# TD = param_curve.tortuosity("TD", smooth=1.0)
-# SOAM = param_curve.tortuosity("SOAM")
-# T_scc = param_curve.tortuosity("SCC")
-# T_escc = param_curve.tortuosity("ESCC")
+ICM = param_curve.tortuosity("ICM", smooth=1.0)
+TD = param_curve.tortuosity("TD", smooth=1.0)
+SOAM = param_curve.tortuosity("SOAM")
+T_scc = param_curve.tortuosity("SCC")
+T_escc = param_curve.tortuosity("ESCC")
 
 
-# print("Tortuosity (DM): {:.5f}".format(T_dm))
-# print("Tortuosity (Total Curvature): {:.5f}".format(T_2))
-# print("Tortuosity (Tau_3): {:.5f}".format(T_3))
-# print("Tortuosity (Tau_5): {:.5f}".format(T_5))
-# print("Tortuosity (ASDC): {:.5f}".format(ASDC))
-# print("Tortuosity (ICM): {:.5f}".format(ICM))
-# print("Tortuosity (TD): {:.5f}".format(TD))
-# print("Tortuosity (SOAM): {:.5f}".format(SOAM))
-# print("Tortuosity (SCC): {:.5f}".format(T_scc))
-# print("Tortuosity (ESCC): {:.5f}".format(T_escc))
+print("Tortuosity (DM): {:.5f}".format(T_dm))
+print("Tortuosity (Total Curvature): {:.5f}".format(T_2))
+print("Tortuosity (Tau_3): {:.5f}".format(T_3))
+print("Tortuosity (Tau_5): {:.5f}".format(T_5))
+print("Tortuosity (ASDC): {:.8f}".format(ASDC))
+print("Tortuosity (ICM): {:.5f}".format(ICM))
+print("Tortuosity (TD): {:.8f}".format(TD))
+print("Tortuosity (SOAM): {:.5f}".format(SOAM))
+print("Tortuosity (SCC): {:.5f}".format(T_scc))
+print("Tortuosity (ESCC): {:.5f}".format(T_escc))
 
 pixel_curve.plot(smoothed_curve, param_curve, labels=["original", "smoothed", "parametrized"], show_points=True)
 
