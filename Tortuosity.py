@@ -33,7 +33,7 @@ class _ArrayCurve:
  
     def arclength(self):
         return geometry.arclength(self.x, self.y)
- 
+
     def __len__(self):
         return len(self.x)
     
@@ -150,8 +150,9 @@ class TotalCurvatureTortuosity(TortuosityMeasure):
         n = len(x)
         if n < 3:
             return 0.0
- 
-        deriv = CurveDerivatives(_ArrayCurve(x, y))
+
+        scc_t = geometry.cumulative_arclength(x, y)
+        deriv = CurveDerivatives(_ArrayCurve(x, y), t=scc_t)
         t, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
         total_curvature = np.trapezoid(np.abs(kappa), t)
  
