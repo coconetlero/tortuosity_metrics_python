@@ -162,9 +162,9 @@ class TotalCurvatureTortuosity(TortuosityMeasure):
 
 class Tau_3_Tortuosity(TortuosityMeasure):
     """
-    Tau_3 Tortuosity (William E. Hart et al., 1998):
+    Total Squared Curvature (Tau_3) (William E. Hart et al., 1998):
     
-        TC = integral of kappa(s) ds
+        Tau_3 = TSC = integral of kappa(s)^2 ds
  
     Parameters:
         smooth : float
@@ -195,9 +195,9 @@ class Tau_3_Tortuosity(TortuosityMeasure):
 
 class Tau_5_Tortuosity(TortuosityMeasure):
     """
-    Tau_3 Tortuosity (William E. Hart et al., 1998):
+    Tau_5 Tortuosity (William E. Hart et al., 1998):
     
-        TC = integral of kappa(s) ds
+        Tau_5 = Tau_3 / arc_length
  
     Parameters:
         smooth : float
@@ -217,9 +217,10 @@ class Tau_5_Tortuosity(TortuosityMeasure):
         if n < 3:
             return 0.0
  
-        deriv = CurveDerivatives(_ArrayCurve(x, y))
+        curve_parametrization = geometry.cumulative_arclength(x, y)
+        deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
         t, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
-        Tau_3 = np.trapezoid(kappa, t)
+        Tau_3 = np.trapezoid(kappa ** 2, t)
         L_c = geometry.arclength(x, y)
         Tau_5 = Tau_3 / L_c
 
