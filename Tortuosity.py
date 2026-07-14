@@ -217,11 +217,8 @@ class Tau_5_Tortuosity(TortuosityMeasure):
         if n < 3:
             return 0.0
  
-        curve_parametrization = geometry.cumulative_arclength(x, y)
-        deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
-        t, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
-        Tau_3 = np.trapezoid(kappa ** 2, t)
         L_c = geometry.arclength(x, y)
+        Tau_3 = Tau_3_Tortuosity().compute(x, y)
         Tau_5 = Tau_3 / L_c
 
         return float(Tau_5)
@@ -259,14 +256,6 @@ class AverageSquaredDerivativeCurvatureTortuosity(TortuosityMeasure):
         deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
         t, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
  
-        # trim = int(round(0.1 * len(t)))
-        # if trim > 0 and len(t) - 2 * trim >= 3:
-        #     t = t[trim: len(t) - trim]
-        #     kappa = kappa[trim: len(kappa) - trim]
- 
-        # if len(t) < 3:
-        #     return 0.0
- 
         dkappa_dt = np.gradient(kappa)
         integral = np.trapezoid(dkappa_dt**2)
 
@@ -287,38 +276,78 @@ class InflectionCountTortuosity(TortuosityMeasure):
  
     where n_inflections is the number of sign changes in curvature
     (i.e. the number of times the curve switches from bending one way
-    to bending the other), computed using exact analytical derivatives
-    from a csaps cubic smoothing spline fit (see derivatives.py /
-    CurveDerivatives / CsapsDerivative). Captures both overall
-    elongation (via the arc-chord ratio) and the number of directional
-    reversals.
+    to bending the other).
  
     Parameters:
         smooth : float
             Smoothing parameter in [0, 1], passed to the underlying
             csaps fit. 0 = least-squares line fit, 1 = exact
             interpolation. Default 0.99 lightly regularizes to avoid
-            spurious inflections from point-to-point noise. Requires:
-            pip install csaps.
+            spurious inflections from point-to-point noise. 
+        threshold : float
+            only count an inflection if the "excess a curvature" of the segment     
     """
  
-    def __init__(self, smooth=0.99):
+    def __init__(self, smooth=0.99, threshold=1e-4):
         self.smooth = smooth
+        self.threshold = threshold  # minimum excess length to count an inflection
+
+    # def compute(self, x, y):
+    #     n = len(x)
+    #     if n < 3:
+    #         return 0.0
+ 
+    #     curve_parametrization = geometry.cumulative_arclength(x, y)
+    #     deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
+    #     _, signed_curvature = deriv.curvature(method="csaps", smooth=self.smooth)
+ 
+    #     signs = np.sign(signed_curvature)
+    #     signs = signs[signs != 0]  # ignore exact zeros
+    #     n_inflections = int(np.sum(np.diff(signs) != 0)) if len(signs) > 1 else 0
+ 
+    #     arc_chord = Distance_Metric_Tortuosity().compute(x, y)
+    #     return arc_chord * (n_inflections + 1)
  
     def compute(self, x, y):
         n = len(x)
         if n < 3:
             return 0.0
  
-        deriv = CurveDerivatives(_ArrayCurve(x, y))
-        _, signed_curvature = deriv.curvature(method="csaps", smooth=self.smooth)
+        curve_parametrization = geometry.cumulative_arclength(x, y)
+        deriv = CurveDerivatives(_ArrayCurve(x, y), t=curve_parametrization)
+        _, kappa = deriv.curvature(method="csaps", smooth=self.smooth)
  
-        signs = np.sign(signed_curvature)
-        signs = signs[signs != 0]  # ignore exact zeros
-        n_inflections = int(np.sum(np.diff(signs) != 0)) if len(signs) > 1 else 0
- 
-        arc_chord = Distance_Metric_Tortuosity().compute(x, y)
-        return arc_chord * (n_inflections + 1)
+        signs = np.sign(kappa)
+        
+        i_start = 0
+        n_inflections = 0        
+        sign_deriv = signs[0]
+        for i, sign_i in enumerate(signs[1:], start=1):
+            if sign_i == 0:
+                continue
+            
+            if sign_deriv == 0:
+                sign_deriv = sign_i
+
+            if sign_deriv != sign_i:
+                sign_deriv = sign_i
+                i_end = i
+
+                if i_end - i_start < 2:
+                    i_start = i
+                    continue                
+
+                Lcs_i = geometry.arclength(x[i_start:i_end + 1], y[i_start:i_end + 1])
+                Lxs_i = np.hypot(x[i_start] - x[i_end], y[i_start] - y[i_end])
+                Lt = (Lcs_i / Lxs_i) - 1
+    
+                if Lt > self.threshold:
+                    n_inflections += 1
+
+                i_start = i - 1
+        
+        DM = Distance_Metric_Tortuosity().compute(x, y)
+        return DM * (n_inflections + 1)
 
 
 
