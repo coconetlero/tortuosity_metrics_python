@@ -43,3 +43,21 @@ python test.py
 - `derivatives.py` — `CurveDerivatives`: finite differences, spline, and csaps derivative methods
 - `tortuosity.py` — tortuosity measures (arc-chord, SOAM, curvature-based, ICM, TD, ASDC)
 - `geometry.py` — shared arc-length / chord-length utilities
+
+
+## Data are available in the data and data_II folders
+all the arteries curves including Fundus and OCT cameras
+- data/curves_arteries/  
+
+all the veins curves including Fundus and OCT cameras
+- data/curves_veins/
+
+arteries from Fundus images
+data_II/curves_arteries/fp
+arteries from OCT images
+data_II/curves_arteries/ir
+
+veins from Fundus images
+data_II/curves_veins/fp
+veins from OCT images
+data_II/curves_veins/ir
