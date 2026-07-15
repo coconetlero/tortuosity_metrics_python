@@ -11,7 +11,7 @@ import utils.load_and_write as lw
 
 ### path for the image and the curve coordinates
 # im_path = "/Volumes/HOUSE MINI/IMAGENES/Fondus_Databases/SCALE_TORT_DB/im_arteries/18_18_art_fp.tif"
-curve_path = 'data/curves_arteries/18_18_art_fp.txt'
+curve_path = 'data/curves_arteries/01_01_art_fp.txt'
 
 ### load the image and its corresponding curve coordinates, and create a Curve object
 # img = cv2.imread(im_path, cv2.IMREAD_GRAYSCALE)
