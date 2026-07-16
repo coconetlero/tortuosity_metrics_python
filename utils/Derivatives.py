@@ -292,4 +292,5 @@ class CurveDerivatives:
         denom[np.isclose(denom, 0)] = np.finfo(float).eps
 
         kappa = (dxdt * d2ydt2 - dydt * d2xdt2) / denom
+        kappa[np.isclose(kappa, 0, atol=1e-12), ] = 0.0
         return t_eval, kappa
