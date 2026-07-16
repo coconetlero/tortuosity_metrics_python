@@ -168,7 +168,7 @@ def plot_two_curves(curve1, curve2, plot_title="Curves Comparison", label1='Curv
 
 
 
-def display_curve_on_image(image_path, curve):
+def display_curve_on_image(image_path, curve, interactive=False):
 
     img_bgr = cv2.imread(image_path)
     if img_bgr is None:
@@ -185,6 +185,7 @@ def display_curve_on_image(image_path, curve):
     plt.scatter(x, y, s=5, color='yellow', alpha=0.5)     # optional: show sample points
     plt.axis('off')
     plt.tight_layout()
+    plt.ioff() if interactive else None
     plt.show()
 
 

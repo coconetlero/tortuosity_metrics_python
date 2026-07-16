@@ -18,3 +18,6 @@ env/
 dist/
 build/
 *.log
+
+# test files 
+test_all_2.py
