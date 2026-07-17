@@ -218,7 +218,7 @@ class Tau_5_Tortuosity(TortuosityMeasure):
             return 0.0
  
         L_c = geometry.arclength(x, y)
-        Tau_3 = Tau_3_Tortuosity().compute(x, y)
+        Tau_3 = Tau_3_Tortuosity(smooth=self.smooth).compute(x, y)
         Tau_5 = Tau_3 / L_c
 
         return float(Tau_5)

@@ -45,7 +45,8 @@ python test.py
 - `geometry.py` — shared arc-length / chord-length utilities
 
 
-## Data are available in the data and data_II folders
+## Data 
+Data are available in the data and data_II folders
 all the arteries curves including Fundus and OCT cameras
 - data/curves_arteries/  
 
@@ -61,3 +62,7 @@ veins from Fundus images
 data_II/curves_veins/fp
 veins from OCT images
 data_II/curves_veins/ir
+
+For the corresponding images you can download the SCALE-TORT Database in the Leipzig Health Atlas
+
+https://www.health-atlas.de/projects/64
