@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ## Verify the install
 
 ```bash
-python3 -c "from curve import Curve; c = Curve([0, 1, 2], [0, 1, 4]); print(c)"
+python3 -c "from Curve import Curve; c = Curve([0, 1, 2], [0, 1, 4]); print(c)"
 ```
 
 Expected output:
@@ -38,14 +38,14 @@ python test.py
 
 ## Modules
 
-- `curve.py` — `Curve` class: 2D open curve, smoothing, resampling, plotting
-- `smoothers.py` — smoothing strategies (spline, moving average, Savitzky-Golay, Gaussian)
-- `derivatives.py` — `CurveDerivatives`: finite differences, spline, and csaps derivative methods
-- `tortuosity.py` — tortuosity measures (arc-chord, SOAM, curvature-based, ICM, TD, ASDC)
+- `Curve.py` — `Curve` class: 2D open curve, smoothing, resampling, plotting
+- `Smoothers.py` — smoothing strategies (spline, moving average, Savitzky-Golay, Gaussian)
+- `Derivatives.py` — `CurveDerivatives`: finite differences, spline, and csaps derivative methods
+- `Tortuosity.py` — tortuosity measures (arc-chord, SOAM, curvature-based, ICM, TD, ASDC)
 - `geometry.py` — shared arc-length / chord-length utilities
+- `load_adn_write.py` - load, and display curve data from files, auxiliary methods
 
-
-## Run Data 
+## Data 
 
 Data are available in the data and data_II folders
 all the arteries curves including Fundus and OCT cameras
