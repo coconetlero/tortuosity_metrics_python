@@ -42,6 +42,9 @@ class Curve:
         return self.x.shape[0]
 
 
+    def __repr__(self):
+        return f"Curve(n_points={len(self)}, length={self.arclength():.4f})"
+
     @property
     def points(self):
         """Returns an (N, 2) array of [x, y] coordinate pairs."""
