@@ -165,16 +165,17 @@ def SCC_parametrization(X, Y, n_points):
         t_length : float
             Total arc length of the resampled polyline.
     """
+    Xp = np.zeros(n_points)
+    Yp = np.zeros(n_points)
+
     X = np.asarray(X, dtype=float)
     Y = np.asarray(Y, dtype=float)
     n = len(X)
     L_c = arclength(X, Y)
 
     # Target step length between resampled points
+    n_points -= 1
     step = L_c / (n_points)
-
-    Xp = np.zeros(n_points)
-    Yp = np.zeros(n_points)
 
     cx, cy = X[0], Y[0]
     idx = 0     # index into original polyline (0-based)
@@ -205,8 +206,11 @@ def SCC_parametrization(X, Y, n_points):
         idx = i
         o_idx += 1
 
-    Xp[o_idx] = X[-1]
-    Yp[o_idx] = Y[-1]
+    Xp[o_idx] = cx
+    Yp[o_idx] = cy        
+
+    Xp[-1] = X[-1]
+    Yp[-1] = Y[-1]
 
     t_length = arclength(Xp, Yp)
 
