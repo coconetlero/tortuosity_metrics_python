@@ -43,6 +43,43 @@ def load_pixelated_curve_from_txt_file(file_path, delimiter=' '):
     return pixelated_curve
 
 
+
+def load_curve_from_txt_file(file_path):
+    """
+    Load a curve from a txt file
+    """
+    points = []
+    with open(file_path) as f:
+        for line in f:
+            line = " ".join(re.split(r"[,\s]+", line.strip()))
+            if line:
+                x, y = line.split()
+                points.append((float(x), float(y)))
+    points = np.array(points)
+
+    unique_rows, idx = np.unique(points, axis=0, return_index=True)
+    pixelated_curve = unique_rows[np.argsort(idx)]
+    return pixelated_curve
+
+
+
+def load_curves_from_Folder(folder_path):
+    """
+    Load all curves from a folder containing txt files
+    """
+    curves = []
+    filenames = []
+    filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('.')]
+    filtered_filenames = sorted(filtered_filenames)
+    for filename in filtered_filenames:
+        file_path = os.path.join(folder_path, filename)
+        curve = load_curve_from_txt_file(file_path)
+        curves.append(curve)
+        filenames.append(filename)
+    
+    return curves, filenames
+
+
 def load_pixelated_curves_from_txt_files(folder_path, delimiter=' '):
     """
     Load all curves from a folder containing txt files
