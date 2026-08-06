@@ -11,12 +11,13 @@ import utils.load_and_write as lw
 
 ### path for the image and the curve coordinates
 # im_path = "/Volumes/HOUSE MINI/IMAGENES/Fondus_Databases/SCALE_TORT_DB/im_arteries/18_18_art_fp.tif"
-curve_path = 'data/curves_arteries/01_01_art_fp.txt'
+fp_curve_path = 'data/smooth_data/arteries/01_01_art_fp_smoothed.txt'
+ir_curve_path = 'data/smooth_data/arteries/01_01_art_ir_smoothed.txt'
 
 ### load the image and its corresponding curve coordinates, and create a Curve object
 # img = cv2.imread(im_path, cv2.IMREAD_GRAYSCALE)
-curve_coords_f = lw.load_pixelated_curve_from_txt_file(curve_path, delimiter=',')
-curve_coords_o = lw.load_pixelated_curve_from_txt_file(curve_path.replace('_fp.txt', '_ir.txt'), delimiter=',')
+curve_coords_f = lw.load_curve_from_txt_file(fp_curve_path)
+curve_coords_o = lw.load_curve_from_txt_file(ir_curve_path)
 curve_coords_f += 1  # add 1 to be MATLAB arteries_data.mat and veins_data.m compatible, (1 based indexing)
 curve_coords_o += 1  # add 1 to be MATLAB arteries_data.mat and veins_data.m compatible, (1 based indexing)
 
