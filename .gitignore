@@ -21,3 +21,4 @@ build/
 
 # test files 
 test_all_2.py
+test_with_smoothed.py
