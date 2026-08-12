@@ -33,9 +33,7 @@ def load_curves_from_Folder(folder_path):
     """
     curves = []
     filenames = []
-    folder_path = Path(folder_path)
-    filtered_filenames = [f.name for f in folder_path.glob('*.txt') if not f.name.startswith('._')]
-    # filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('.')]
+    filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('.')]
     
     filtered_filenames = sorted(filtered_filenames)
     for filename in filtered_filenames:
