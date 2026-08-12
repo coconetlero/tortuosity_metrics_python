@@ -5,15 +5,14 @@ import numpy as np
 
 
 from Curve import Curve
-from utils import geometry
 import utils.load_and_write as lw
 
 
 def process_curve(curve_path):
-    curve_coords = lw.load_curve_from_txt_file(curve_path)
+    raw_curve = lw.load_curve_from_txt_file(curve_path)
     # curve_coords += 1  # add 1 to be MATLAB compatible, (1 based indexing)
 
-    raster_curve = Curve(curve_coords[:, 0], curve_coords[:, 1])
+    raster_curve = Curve(raw_curve[:, 0], raw_curve[:, 1])
 
     # --- proposed heuristics for smoothing and resampling ---
     # --- you can change with yours ---
