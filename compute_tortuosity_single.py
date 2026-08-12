@@ -15,13 +15,17 @@ def process_curve(curve_path):
 
     raster_curve = Curve(curve_coords[:, 0], curve_coords[:, 1])
 
+    # --- proposed heuristics for smoothing and resampling ---
+    # --- you can change with yours ---
     L_c = raster_curve.arclength()
     num_of_points = math.ceil(len(raster_curve) * 0.25)
     smoothness = 8 / L_c
 
+    # --- smooth and resample the curve
     smoothed_curve = raster_curve.smooth("cubic_spline", smooth=smoothness, num_points=num_of_points)
     param_curve = smoothed_curve.parametrize("scc", num_points=num_of_points)
     
+    # --- compute tortuosity metrics ---
     tortuosity_metrics = {
         "T_dm": param_curve.tortuosity("DM"),
         "T_2": param_curve.tortuosity("total_curvature", smooth=1.0),
