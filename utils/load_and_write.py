@@ -1,46 +1,10 @@
 
+from pathlib import Path
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 import os
 import re        
-
-
-
-def load_float_curve_from_txt_file(file_path, delimiter=' '):
-    """
-    Load a curve from a txt file
-    """
-    curve = np.loadtxt(file_path, dtype=np.float32, delimiter=delimiter)
-    return curve
-
-
-def load_float_curves_from_txt_files(folder_path, delimiter=' '):
-    """
-    Load all curves from a folder containing txt files
-    """
-    curves = []
-    filenames = []
-    filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('._')]
-    filtered_filenames = sorted(filtered_filenames)
-    for filename in filtered_filenames:
-        file_path = os.path.join(folder_path, filename)
-        curve = load_float_curve_from_txt_file(file_path, delimiter=delimiter)
-        curves.append(curve)
-        filenames.append(filename)
-    
-    return curves, filenames
-
-
-
-def load_pixelated_curve_from_txt_file(file_path, delimiter=' '):
-    """
-    Load a curve from a txt file
-    """
-    points = np.loadtxt(file_path, dtype=int, delimiter=delimiter)
-    unique_rows, idx = np.unique(points, axis=0, return_index=True)
-    pixelated_curve = unique_rows[np.argsort(idx)]
-    return pixelated_curve
 
 
 
@@ -58,8 +22,8 @@ def load_curve_from_txt_file(file_path):
     points = np.array(points)
 
     unique_rows, idx = np.unique(points, axis=0, return_index=True)
-    pixelated_curve = unique_rows[np.argsort(idx)]
-    return pixelated_curve
+    curve = unique_rows[np.argsort(idx)]
+    return curve
 
 
 
@@ -69,7 +33,10 @@ def load_curves_from_Folder(folder_path):
     """
     curves = []
     filenames = []
-    filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('.')]
+    folder_path = Path(folder_path)
+    filtered_filenames = [f.name for f in folder_path.glob('*.txt') if not f.name.startswith('._')]
+    # filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('.')]
+    
     filtered_filenames = sorted(filtered_filenames)
     for filename in filtered_filenames:
         file_path = os.path.join(folder_path, filename)
@@ -80,21 +47,18 @@ def load_curves_from_Folder(folder_path):
     return curves, filenames
 
 
-def load_pixelated_curves_from_txt_files(folder_path, delimiter=' '):
+
+def load_curves_from_filenames(folder_path, filenames):
     """
-    Load all curves from a folder containing txt files
+    Load all curves from a list of filenames in a specified folder
     """
     curves = []
-    filenames = []
-    filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('._')]
-    filtered_filenames = sorted(filtered_filenames)
-    for filename in filtered_filenames:
+    for filename in filenames:
         file_path = os.path.join(folder_path, filename)
-        curve = load_pixelated_curve_from_txt_file(file_path, delimiter=delimiter)
+        curve = load_curve_from_txt_file(file_path)
         curves.append(curve)
-        filenames.append(filename)
     
-    return curves, filenames
+    return curves
 
 
 
@@ -206,7 +170,17 @@ def plot_two_curves(curve1, curve2, plot_title="Curves Comparison", label1='Curv
 
 
 def display_curve_on_image(image_path, curve, interactive=False):
+    """ 
+        Display a curve on an image. 
 
+    Args:
+        image_path (_type_): _description_
+        curve (_type_): _description_
+        interactive (bool, optional): _description_. Defaults to False.
+
+    Raises:
+        FileNotFoundError: _description_
+    """
     img_bgr = cv2.imread(image_path)
     if img_bgr is None:
         raise FileNotFoundError("Could not load image")
@@ -228,7 +202,17 @@ def display_curve_on_image(image_path, curve, interactive=False):
 
 
 def display_curve_on_image_2(image_path, curve1, curve2):
-    
+    """
+        Display two curves on an image
+
+    Args:
+        image_path (_type_): _description_
+        curve1 (_type_): _description_
+        curve2 (_type_): _description_
+
+    Raises:
+        FileNotFoundError: _description_
+    """
     img_bgr = cv2.imread(image_path)
     if img_bgr is None:
         raise FileNotFoundError("Could not load image")
