@@ -52,10 +52,10 @@ python compute_tortuosity_single.py data/original_data/arteries_data_coords/01_0
 
 Data are available in the data and data_II folders
 all the arteries curves including Fundus and OCT cameras
-- data/curves_arteries/  
+- `data/curves_arteries/`  
 
 all the veins curves including Fundus and OCT cameras
-- data/curves_veins/
+- `data/curves_veins/`
 
 arteries from Fundus images
 data_II/curves_arteries/fp
