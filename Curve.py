@@ -5,7 +5,9 @@ from scipy.interpolate import interp1d
 
 import utils.geometry as geometry
 from utils.Smoothers import Smoother, get_smoother
+from utils.Parametrization_Strategy import Parametrization, get_parametrization
 from Tortuosity import TortuosityMeasure, get_tortuosity_measure
+
 
 
 
@@ -145,8 +147,45 @@ class Curve:
         return Curve(x_smooth, y_smooth)
     
 
+    # ------------------------------------------------------------------
+    # Parametrization
+    # ------------------------------------------------------------------
 
-     # ------------------------------------------------------------------
+    def parametrize(self, method="arclength", **kwargs):
+        """
+        Parametrize the curve using the given strategy and return the parameter values and coordinates.
+
+        This method dispatches to a `Parametrization` implementation, following the 
+        Strategy pattern (see Parametrization_Strategy.py): new parametrization 
+        algorithms can be added there without touching this method.
+
+        Parameters:
+            method : str or Parametrization instance Either a registry key 
+            **kwargs :
+                Passed to the parametrization's constructor when `method`
+                required extended parameters (e.g. num_points=200, kind='cubic').
+
+        Returns:
+            Curve
+                A new, re-parametrized Curve instance.
+
+        Examples:
+            t, x, y = curve.parametrize("arclength")
+            t, x, y = curve.parametrize("uniform", num_points=100)
+            t, x, y = curve.parametrize("adaptive", num_points=150, curvature_weight=2.0)
+        """
+        
+        
+        if isinstance(method, Parametrization):
+            param = method
+        else:
+            param = get_parametrization(method, **kwargs)
+        
+        t, x, y = param.apply(self)
+        return Curve(x, y)
+
+
+    # ------------------------------------------------------------------
     # Tortuosity
     # ------------------------------------------------------------------
  
@@ -172,9 +211,7 @@ class Curve:
  
         Examples:
             curve.tortuosity()                    # arc-chord ratio (default)
-            curve.tortuosity("soam")
-            curve.tortuosity("icm")
-            curve.tortuosity(MyCustomMeasure())
+            curve.tortuosity("scc")
         """
         if isinstance(method, TortuosityMeasure):
             measure = method
