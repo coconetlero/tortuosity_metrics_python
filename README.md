@@ -34,7 +34,10 @@ Curve(n_points=3, length=4.5765)
 ## Run
 The metrics test file:
 
-python test.py
+Example for compute all the tortuosity implemented metrics in one curve. 
+```bash
+python compute_tortuosity_single.py data/original_data/arteries_data_coords/01_01_art_fp.txt
+```
 
 ## Modules
 
