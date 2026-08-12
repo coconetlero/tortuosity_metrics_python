@@ -18,6 +18,7 @@ env/
 dist/
 build/
 *.log
+.gitignore
 
 # test files 
 test_all_2.py
