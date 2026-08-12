@@ -39,6 +39,13 @@ Example for compute all the tortuosity implemented metrics in one curve.
 python compute_tortuosity_single.py data/original_data/arteries_data_coords/01_01_art_fp.txt
 ```
 
+Example of batch processing for the calculation of all available tortuosity metrics. 
+The program processes all curve files contained in a folder, where each curve is defined in a TXT file.
+Output is given as a csv file. 
+```bash
+python compute_tortuosity_batch.py data/original_data/arteries_data_coords/ output.csv
+```
+
 ## Modules
 
 - `Curve.py` — `Curve` class: 2D open curve, smoothing, resampling, plotting
