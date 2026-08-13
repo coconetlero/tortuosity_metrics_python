@@ -1,12 +1,13 @@
 
-from pathlib import Path
+
 import cv2
-from matplotlib import pyplot as plt
-import numpy as np
 import os
-import re        
+import re
+import pathlib 
+import numpy as np       
 
 
+from matplotlib import pyplot as plt
 
 def load_curve_from_txt_file(file_path):
     """
@@ -33,8 +34,8 @@ def load_curves_from_Folder(folder_path):
     """
     curves = []
     filenames = []
-    filtered_filenames = [item for item in os.listdir(folder_path) if not item.startswith('.')]
-    
+    folder_path = pathlib.Path(folder_path)
+    filtered_filenames = [f.name for f in folder_path.iterdir() if f.is_file() and not f.name.startswith('._')]
     filtered_filenames = sorted(filtered_filenames)
     for filename in filtered_filenames:
         file_path = os.path.join(folder_path, filename)
