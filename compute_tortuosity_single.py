@@ -34,12 +34,15 @@ def process_curve(curve_path):
         "ICM": param_curve.tortuosity("ICM", smooth=1.0),
         "TD": param_curve.tortuosity("TD", smooth=1.0),
         "SOAM": param_curve.tortuosity("SOAM"),
-        "T_scc": param_curve.tortuosity("SCC")
+        "SCC": param_curve.tortuosity("SCC"),
+        "ESCC": param_curve.tortuosity("ESCC")
     }
 
     print(f"Tortuosity metrics for {curve_path}:")
     for metric, value in tortuosity_metrics.items():
         print("{}: {:.6f}".format(metric, value))
+
+    raster_curve.plot(smoothed_curve, show_points=True, labels=["Smooth", "Raster"])
 
 
 def main():

@@ -10,10 +10,10 @@ from Curve import Curve
 import time
 
 
-def process_folder(folder_path, output_file):
+def process_folder(folder_path):
     raw_curves, filenames = lw.load_curves_from_Folder(folder_path)
 
-    tortuosity_measures = []
+    tortuosity_metrics = []
     for raw_curve in raw_curves:
         # raw_curve += 1  # add 1 to be MATLAB compatible, (1 based indexing)
         
@@ -25,13 +25,13 @@ def process_folder(folder_path, output_file):
         num_of_points = math.ceil(len(raster_curve) * 0.25)
         smoothness = 8 / L_c
 
-         # --- smooth and resample the curve
+        # --- smooth and resample the curve
         smoothed_curve = raster_curve.smooth("cubic_spline", smooth=smoothness, num_points=num_of_points)
         param_curve = smoothed_curve.parametrize("scc", num_points=num_of_points)
 
         # --- compute tortuosity metrics ---
         
-        T_dm = param_curve.tortuosity("DM")
+        DM = param_curve.tortuosity("DM")
         T_2 = param_curve.tortuosity("total_curvature", smooth=1.0)
         T_3 = param_curve.tortuosity("tau_3", smooth=1.0)
         T_5 = param_curve.tortuosity("tau_5", smooth=1.0)
@@ -39,15 +39,12 @@ def process_folder(folder_path, output_file):
         ICM = param_curve.tortuosity("ICM", smooth=1.0)
         TD = param_curve.tortuosity("TD", smooth=1.0)
         SOAM = param_curve.tortuosity("SOAM")
-        T_scc = param_curve.tortuosity("SCC")
-        T_escc = param_curve.tortuosity("ESCC")
+        SCC = param_curve.tortuosity("SCC")
+        ESCC = param_curve.tortuosity("ESCC")
 
-        tortuosity_measures.append([T_dm, T_2, T_3, T_5, ASDC, ICM, TD, SOAM, T_scc, T_escc])
+        tortuosity_metrics.append([DM, T_2, T_3, T_5, ASDC, ICM, TD, SOAM, SCC, ESCC])
 
-    df = pd.DataFrame(tortuosity_measures, columns =
-                      ["DM", "T_2", "T_3", "T_5", "ASDC", "ICM", "TD", "SOAM", "SCC", "ESCC"])
-    df.insert(0, "Curve Name", filenames)
-    df.to_csv(output_file, index=False, float_format='%.6f')
+    return tortuosity_metrics, filenames
 
 
 
@@ -58,15 +55,19 @@ def main():
     args = parser.parse_args()
 
     try:
-        process_folder(args.path, args.output_file)
+
+        tortuosity_metrics, filenames = process_folder(args.path)
+        df = pd.DataFrame(tortuosity_metrics, columns =
+                              ["DM", "T_2", "T_3", "T_5", "ASDC", "ICM", "TD", "SOAM", "SCC", "ESCC"])
+        df.insert(0, "Curve Name", filenames)
+        df.to_csv(args.output_file, index=False, float_format='%.6f')
+
     except Exception as e:
         print(f" Error: {e}")
         sys.exit(1)
 
 
 if __name__ == "__main__":
-    start = time.perf_counter()
     main()
-    elapsed = time.perf_counter() - start
     
-    print(f"Execution Time: {elapsed:.6f} segundos")
+    
