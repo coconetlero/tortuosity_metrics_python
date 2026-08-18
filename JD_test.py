@@ -72,14 +72,10 @@ if __name__ == "__main__":
         Gf = 8 / Lf_c
         Go = 8 / Lo_c
 
-        smoothed_curve_fp = pixel_curve_fp.smooth("cubic_spline", smooth=Gf, num_points=Sf)
-        smoothed_curve_ir = pixel_curve_ir.smooth("cubic_spline", smooth=Go, num_points=So)
-
-        Xfp_scc, Yfp_scc, _ = geometry.SCC_parametrization(smoothed_curve_fp.x, smoothed_curve_fp.y, n_points=len(smoothed_curve_fp))
-        Xir_scc, Yir_scc, _ = geometry.SCC_parametrization(smoothed_curve_ir.x, smoothed_curve_ir.y, n_points=len(smoothed_curve_ir))
-
-        param_curve_fp = Curve(Xfp_scc, Yfp_scc)
-        param_curve_ir = Curve(Xir_scc, Yir_scc)
+        smoothed_curve_fp = pixel_curve_fp.smooth("cubic_spline", smooth=Gf, num_points=len(pixel_curve_fp))
+        smoothed_curve_ir = pixel_curve_ir.smooth("cubic_spline", smooth=Go, num_points=len(pixel_curve_ir))
+        param_curve_fp = smoothed_curve_fp.parametrize("scc", num_points=So)
+        param_curve_ir = smoothed_curve_ir.parametrize("scc", num_points=So)
 
         T_scc_fp = param_curve_fp.tortuosity("SCC")
         T_escc_fp = param_curve_fp.tortuosity("ESCC")

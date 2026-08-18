@@ -22,5 +22,5 @@ results/
 .gitignore
 
 # test files 
-test_all_2.py
+JD_test_2.py
 test_with_smoothed.py
