@@ -51,7 +51,26 @@ class Curve:
     def points(self):
         """Returns an (N, 2) array of [x, y] coordinate pairs."""
         return np.column_stack((self.x, self.y))
+    
 
+    def update(self, x, y):
+        """
+        Update X and Y coordinates
+
+        Parameters:
+            x (np.ndarray): x-coordinates of the curve points
+            y (np.ndarray): y-coordinates of the curve points
+        """
+        x = np.asarray(x, dtype=float).flatten()
+        y = np.asarray(y, dtype=float).flatten()
+ 
+        if x.shape[0] != y.shape[0]:
+            raise ValueError("x and y must have the same length")
+        if x.shape[0] < 2:
+            raise ValueError("A curve requires at least 2 points")
+ 
+        self.x = x
+        self.y = y
 
 
     # ------------------------------------------------------------------
