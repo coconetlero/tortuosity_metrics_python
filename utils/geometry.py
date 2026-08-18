@@ -193,7 +193,10 @@ def SCC_parametrization(X, Y, n_points):
             intersections = circle_line_intersection(cx, cy, step, P1, P2)
 
             if intersections:
-                cx, cy = intersections[0]
+                if len(intersections) > 1:
+                    cx, cy = intersections[1] if any(np.isclose(np.array(intersections[0]), np.array([Xp[i],Yp[i]]), rtol=1e-10)) else intersections[1]
+                else:
+                    cx, cy = intersections[0]
                 i += 1
                 break
             else:

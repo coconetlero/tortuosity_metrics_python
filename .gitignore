@@ -23,4 +23,5 @@ results/
 
 # test files 
 JD_test_2.py
+test_synthetic.py
 test_with_smoothed.py
