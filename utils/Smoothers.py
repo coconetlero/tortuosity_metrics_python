@@ -18,6 +18,7 @@ from abc import ABC, abstractmethod
 from csaps import csaps
 
 import numpy as np
+from utils import geometry
 from scipy.interpolate import UnivariateSpline
 from scipy.signal import savgol_filter
 from scipy.ndimage import gaussian_filter1d
@@ -151,6 +152,35 @@ class GaussianSmoother(Smoother):
         return x_smooth, y_smooth
 
 
+
+class ScaleCompensatedSmoother(Smoother):
+    DEFAULTS = {2.0: 1.5e-3, 2.5: 1.2e-4, 3.0: 1.07e-5}
+
+    def __init__(self, gamma=2.5, c=None, eval_frac=0.25):
+        self.gamma = gamma
+        self.c = c
+        self.eval_frac = eval_frac
+    
+    def strip_duplicates(self, x, y):
+        t = geometry.cumulative_arclength(x, y)
+        keep = np.concatenate([[True], np.diff(t) > 1e-9])
+        return x[keep], y[keep], t[keep]
+
+    def apply(self, t, x, y, num_points=None):
+        if self.c is None:
+            self.c = self.DEFAULTS.get(self.gamma, 1.2e-4)
+
+        x, y, t = self.strip_duplicates(x, y)
+        L = t[-1]
+        lam_eff = self.c * (L ** self.gamma)
+        p = 1.0 / (1.0 + lam_eff)          # csaps parameter, p->1 interpolates
+
+        n_out = num_points if num_points is not None else max(10, int(np.ceil(self.eval_frac * len(x))))
+        t_eval = np.linspace(t.min(), t.max(), n_out)
+        return csaps(t, x, t_eval, smooth=p), csaps(t, y, t_eval, smooth=p)
+
+
+    
 # ----------------------------------------------------------------------
 # Registry: maps a string method name -> Smoother class
 # ----------------------------------------------------------------------
@@ -159,7 +189,8 @@ SMOOTHER_REGISTRY = {
     "spline": SplineSmoother,
     "savgol": Savitzky_Golay_Smoother,
     "gaussian": GaussianSmoother,
-    "cubic_spline": CubicSplineSmoother
+    "cubic_spline": CubicSplineSmoother, 
+    "scale_cubic_spline": ScaleCompensatedSmoother,
 }
 
 
