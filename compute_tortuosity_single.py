@@ -21,7 +21,7 @@ def process_curve(curve_path):
     smoothness = 8 / L_c
 
     # --- smooth and resample the curve
-    smoothed_curve = raster_curve.smooth("cubic_spline", smooth=smoothness, num_points=num_of_points)
+    smoothed_curve = raster_curve.smooth("cubic_spline", smooth=smoothness, num_points=len(raster_curve))
     param_curve = smoothed_curve.parametrize("scc", num_points=num_of_points)
     
     # --- compute tortuosity metrics ---
