@@ -65,7 +65,6 @@ def process_folder(_folder_path):
         tortuosity_metrics.append(tm)
         filenames.append(fp_filename.replace('_fp.txt', ''))
 
-    print(max)
     return tortuosity_metrics, filenames
 
 

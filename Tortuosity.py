@@ -500,8 +500,8 @@ class ESCC_Tortuosity(TortuosityMeasure):
             Ye.append(y_0)
 
             alpha = np.radians(M)
-            theta = np.linspace(alpha, alpha + np.pi, 180)
 
+            theta = np.linspace(alpha, alpha + np.pi, 180)
             Xp = x_0 + (L_x * (1 - ((theta - alpha) / np.pi))) * np.cos(theta)
             Yp = y_0 + (L_x * (1 - ((theta - alpha) / np.pi))) * np.sin(theta)
 
@@ -509,10 +509,8 @@ class ESCC_Tortuosity(TortuosityMeasure):
             Xn = x_0 + (L_x * (1 + ((theta - alpha) / np.pi))) * np.cos(theta)
             Yn = y_0 + (L_x * (1 + ((theta - alpha) / np.pi))) * np.sin(theta)
 
-            Xt = np.concatenate([Xp[::-3], Xn])
-            Xt = Xt[1:-3]
-            Yt = np.concatenate([Yp[::-3], Yn])
-            Yt = Yt[1:-3]
+            Xt = np.concatenate([Xp, Xn[:-1][::-1]])
+            Yt = np.concatenate([Yp, Yn[:-1][::-1]])
 
             intersection = False
             n_idx = 1
@@ -522,13 +520,11 @@ class ESCC_Tortuosity(TortuosityMeasure):
             while not intersection:
                 if idx < 0 or idx >= n - 1:
                     break
- 
-                Xl = (X[idx], X[idx + 1])
-                Yl = (Y[idx], Y[idx + 1])
+
+                p1 = (X[idx], Y[idx])
+                p2 = (X[idx + 1], Y[idx + 1])
                 
-                xi, yi = geometry.segment_polyline_intersections(
-                    (Xl[0], Yl[0]), (Xl[1], Yl[1]), Xt, Yt
-                )
+                xi, yi = geometry.segment_polyline_intersections(p1, p2, Xt, Yt)
  
                 if len(xi) > 0:
                     if len(xi) > 1:

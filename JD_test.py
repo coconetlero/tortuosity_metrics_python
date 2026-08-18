@@ -65,17 +65,18 @@ if __name__ == "__main__":
         pixel_curve_fp = Curve(vfp_curves[i][:, 0], vfp_curves[i][:, 1])
         pixel_curve_ir = Curve(vir_curves[i][:, 0], vir_curves[i][:, 1])
 
-        Lf_c = pixel_curve_fp.arclength()
-        Lo_c = pixel_curve_ir.arclength()
-        Sf = math.ceil(len(pixel_curve_fp) * 0.25)
-        So = math.ceil(len(pixel_curve_ir) * 0.25)
-        Gf = 8 / Lf_c
-        Go = 8 / Lo_c
+        fp_L_c = pixel_curve_fp.arclength()
+        ir_L_c = pixel_curve_ir.arclength()
+        fp_num_points = math.ceil(len(pixel_curve_fp) * 0.25)
+        ir_num_points = math.ceil(len(pixel_curve_ir) * 0.25)
+        fp_smooth = 8 / fp_L_c
+        ir_smooth = 8 / ir_L_c
 
-        smoothed_curve_fp = pixel_curve_fp.smooth("cubic_spline", smooth=Gf, num_points=len(pixel_curve_fp))
-        smoothed_curve_ir = pixel_curve_ir.smooth("cubic_spline", smooth=Go, num_points=len(pixel_curve_ir))
-        param_curve_fp = smoothed_curve_fp.parametrize("scc", num_points=So)
-        param_curve_ir = smoothed_curve_ir.parametrize("scc", num_points=So)
+        smoothed_curve_fp = pixel_curve_fp.smooth("cubic_spline", smooth=fp_smooth, num_points=len(pixel_curve_fp))
+        smoothed_curve_ir = pixel_curve_ir.smooth("cubic_spline", smooth=ir_smooth, num_points=len(pixel_curve_ir))
+
+        param_curve_fp = smoothed_curve_fp.parametrize("scc", num_points=ir_num_points)
+        param_curve_ir = smoothed_curve_ir.parametrize("scc", num_points=ir_num_points)
 
         T_scc_fp = param_curve_fp.tortuosity("SCC")
         T_escc_fp = param_curve_fp.tortuosity("ESCC")
@@ -90,4 +91,4 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(tortuosity_measures, columns=["SCC FP", "ESCC FP", "SCC IR", "ESCC IR"])
     df.insert(0, "Curve Name", filenames)
-    df.to_csv("tort_results_(JD).csv", index=False, float_format='%.8f')
+    df.to_csv("results/tort_results_(JD).csv", index=False, float_format='%.8f')
