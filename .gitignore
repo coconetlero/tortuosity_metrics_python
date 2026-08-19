@@ -25,5 +25,6 @@ results/
 JD_test_2.py
 JD_test_new.py
 calibrate_params.py
+test_synthetic.py
 test_with_smoothed.py
 modality_comparison_new.py

@@ -20,9 +20,6 @@ def process_curve(curve_path):
     num_of_points = math.ceil(len(raster_curve) * 0.25)
     smoothness = 8 / L_c
 
-
-    num_of_points = 22
-
     # --- smooth and resample the curve
     smoothed_curve = raster_curve.smooth("cubic_spline", smooth=smoothness, num_points=len(raster_curve))
     param_curve = smoothed_curve.parametrize("scc", num_points=num_of_points)
@@ -45,7 +42,7 @@ def process_curve(curve_path):
     for metric, value in tortuosity_metrics.items():
         print("{}: {:.6f}".format(metric, value))
 
-    raster_curve.plot(smoothed_curve, show_points=True, labels=["Raster", "Smooth"])
+    raster_curve.plot(param_curve, show_points=True, labels=["Raster", "Smooth"])
 
 
 def main():
