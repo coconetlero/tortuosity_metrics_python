@@ -166,7 +166,7 @@ class ScaleCompensatedSmoother(Smoother):
         keep = np.concatenate([[True], np.diff(t) > 1e-9])
         return x[keep], y[keep], t[keep]
 
-    def apply(self, t, x, y, num_points=None):
+    def apply(self, t, x, y, num_points=200):
         if self.c is None:
             self.c = self.DEFAULTS.get(self.gamma, 1.2e-4)
 
@@ -175,8 +175,7 @@ class ScaleCompensatedSmoother(Smoother):
         lam_eff = self.c * (L ** self.gamma)
         p = 1.0 / (1.0 + lam_eff)          # csaps parameter, p->1 interpolates
 
-        n_out = num_points if num_points is not None else max(10, int(np.ceil(self.eval_frac * len(x))))
-        t_eval = np.linspace(t.min(), t.max(), n_out)
+        t_eval = np.linspace(t.min(), t.max(), num_points)
         return csaps(t, x, t_eval, smooth=p), csaps(t, y, t_eval, smooth=p)
 
 
