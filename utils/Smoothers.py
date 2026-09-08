@@ -163,7 +163,7 @@ class ScaleCompensatedSmoother(Smoother):
     
     def strip_duplicates(self, x, y):
         t = geometry.cumulative_arclength(x, y)
-        keep = np.concatenate([[True], np.diff(t) > 1e-9])
+        keep = np.concatenate([[True], np.diff(t) > 1e-10])
         return x[keep], y[keep], t[keep]
 
     def apply(self, t, x, y, num_points=200):
@@ -176,7 +176,9 @@ class ScaleCompensatedSmoother(Smoother):
         p = 1.0 / (1.0 + lam_eff)          # csaps parameter, p->1 interpolates
 
         t_eval = np.linspace(t.min(), t.max(), num_points)
-        return csaps(t, x, t_eval, smooth=p), csaps(t, y, t_eval, smooth=p)
+        x_smooth = csaps(t, x, t_eval, smooth=p)
+        y_smooth = csaps(t, y, t_eval, smooth=p)
+        return x_smooth, y_smooth
 
 
     
