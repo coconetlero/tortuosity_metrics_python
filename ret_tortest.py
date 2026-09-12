@@ -55,6 +55,7 @@ def process_data(images_path, curves_filenames, curves, num_of_points):
 
         raster_curve = Curve(curve[:, 0], curve[:, 1])
         im_filename = os.path.join(images_path, filename.replace('.txt', '.tif'))
+        print(filename)
         lw.display_curve_on_image(im_filename, raster_curve.points)
         L_c = raster_curve.arclength()
 
@@ -64,8 +65,7 @@ def process_data(images_path, curves_filenames, curves, num_of_points):
         tm = compute_tortuosities(param_curve)
         tortuosity_metrics.append(tm)
         filenames.append(filename.replace('.txt', ''))
-
-     
+        
 
         # filenames[i] = re.sub(r'_(fp|ir)\..*$', '', fp_filename)
         # T = [TC_fp, TC_ir, T_scc_fp, T_scc_ir, T_escc_fp, T_escc_ir]
